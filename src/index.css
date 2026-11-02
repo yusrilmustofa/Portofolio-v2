@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  --color-ink: #050510;
+  --color-panel: #0a0a1e;
+  --color-fg: #f0f0ff;
+  --color-muted: #c0c0dc;
+  --color-dim: #8a8ab0;
+  --color-brand: #2c67ed;
+  --color-accent: #3c84f6;
+  --color-glow: #00f0ff;
+  --color-mint: #10b981;
+  --color-rose: #ec4899;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-surface: rgb(255 255 255 / 0.03);
+  --color-surface2: rgb(255 255 255 / 0.05);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  html:has(dialog[open]), body.is-loading { overflow: hidden; }
+  body {
+    @apply font-sans text-fg leading-relaxed antialiased overflow-x-hidden;
+    background:
+      radial-gradient(700px 500px at 12% 18%, rgb(44 103 237 / 0.2), transparent 65%),
+      radial-gradient(600px 500px at 92% 75%, rgb(44 103 237 / 0.12), transparent 65%),
+      var(--color-ink);
+    background-attachment: fixed;
+  }
+  h1, h2, h3 { @apply font-display; line-height: 1.15; letter-spacing: -0.01em; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+  section { scroll-margin-top: 88px; }
+}
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-[1160px] px-6; }
+  /* Jangan transisikan opacity/transform di sini: bentrok dengan tween GSAP pada kartu. */
+  .glass {
+    @apply relative rounded-2xl border border-line bg-surface backdrop-blur-md transition-colors duration-300;
+  }
+  .glass:hover { @apply border-accent/35 bg-surface2; }
+
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-transparent px-6 py-3 text-[15px] font-semibold transition duration-200 active:scale-[.97];
+  }
+  .btn-primary {
+    @apply bg-linear-to-br from-brand to-accent text-white shadow-[0_8px_28px_rgb(44_103_237/.35)] hover:-translate-y-0.5;
+  }
+  .btn-secondary { @apply border-line bg-surface text-fg hover:border-accent/50 hover:bg-surface2; }
+  .icon-btn {
+    @apply inline-flex size-11 items-center justify-center rounded-xl border border-line bg-surface text-muted transition duration-200 hover:-translate-y-0.5 hover:border-accent/50 hover:text-fg;
+  }
+  .field {
+    @apply w-full rounded-xl border border-line bg-black/40 px-3.5 py-3 text-fg transition focus:border-accent focus:outline-none focus:ring-3 focus:ring-brand/20;
+  }
+  .label { @apply font-mono text-xs tracking-[.14em] text-accent uppercase; }
+  .form-status { @apply mt-2.5 min-h-5 text-[13px]; }
+}
+
+/* Border bercahaya saat hover: conic-gradient berputar, tidak bisa dibuat dengan utility. */
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.edge-light::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
+  background: conic-gradient(from var(--angle), transparent 0%, rgb(60 132 246 / .9) 8%, rgb(0 240 255 / .9) 16%, rgb(236 72 153 / .6) 24%, transparent 42%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .4s ease; pointer-events: none;
+}
+.edge-light:hover::before { opacity: 1; animation: angle-spin 3.4s linear infinite; }
+@keyframes angle-spin { to { --angle: 360deg; } }
+
+.meteor {
+  position: absolute; top: -160px; width: 2px; border-radius: 2px; opacity: 0;
+  background: linear-gradient(to bottom, transparent, rgb(150 190 255 / .95) 75%, #fff);
+  animation: meteor-fall linear infinite;
+}
+@keyframes meteor-fall {
+  0%   { transform: translate3d(0, -160px, 0) rotate(26deg); opacity: 0; }
+  6%   { opacity: 1; }
+  70%  { opacity: .85; }
+  100% { transform: translate3d(-46vw, 115vh, 0) rotate(26deg); opacity: 0; }
+}
+
+.grid-lines::before {
+  content: ""; position: absolute; inset: 0; background-size: 26px 26px;
+  background-image:
+    linear-gradient(rgb(255 255 255 / .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / .05) 1px, transparent 1px);
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+.cursor-blink { animation: blink 1s steps(1) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001s !important; transition-duration: .001s !important; }
+  .meteor { display: none; }
+}
