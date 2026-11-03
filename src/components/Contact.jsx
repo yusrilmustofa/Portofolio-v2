@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Copy, MessageSquare, Send, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Copy, MessageSquare, Send } from 'lucide-react';
 import { DATA } from '../data.js';
 import { ICONS } from './icons.jsx';
 import SectionHeading from './SectionHeading.jsx';
@@ -85,18 +85,24 @@ function FindMe() {
   );
 }
 
-/* ponytail: komentar hanya tersimpan di localStorage pengunjung; sambungkan ke backend agar terlihat publik. */
-const STORAGE_KEY = 'portfolio_guestbook_v1';
-const readComments = () => {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+/* Komentar disimpan di Supabase lewat REST (tanpa SDK). Kunci publishable/anon aman di frontend — keamanan diatur RLS di postgre/supabase.sql. */
+const SB_URL = import.meta.env.VITE_SUPABASE_URL;
+const SB_KEY = import.meta.env.VITE_SUPABASE_KEY;
+const sb = async (query = '', init = {}) => {
+  const res = await fetch(`${SB_URL}/rest/v1/comments${query}`, {
+    ...init,
+    headers: { apikey: SB_KEY, 'Content-Type': 'application/json', Prefer: 'return=representation', ...init.headers },
+  });
+  if (!res.ok) throw new Error(res.status);
+  return res.json();
 };
 const avatarColor = (name) => {
   let hue = 0;
   for (const ch of name) hue = (hue * 31 + ch.charCodeAt(0)) % 360;
   return `hsl(${hue}, 70%, 72%)`;
 };
-const timeAgo = (ts) => {
-  const s = Math.max(1, Math.floor((Date.now() - ts) / 1000));
+const timeAgo = (iso) => {
+  const s = Math.max(1, Math.floor((Date.now() - Date.parse(iso)) / 1000));
   if (s < 60) return 'baru saja';
   if (s < 3600) return `${Math.floor(s / 60)} mnt lalu`;
   if (s < 86400) return `${Math.floor(s / 3600)} jam lalu`;
@@ -104,27 +110,36 @@ const timeAgo = (ts) => {
 };
 
 function Guestbook() {
-  const [comments, setComments] = useState(readComments);
-  const [status, setStatus] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [status, setStatus] = useState(SB_URL && SB_KEY ? null : { type: 'err', text: 'Supabase belum dikonfigurasi (lihat .env.example).' });
 
-  const save = (next) => {
-    setComments(next);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { /* storage diblokir */ }
-  };
-  const submit = (e) => {
+  useEffect(() => {
+    if (!SB_URL || !SB_KEY) return;
+    sb('?select=id,name,text,created_at&order=created_at.desc&limit=100')
+      .then(setComments)
+      .catch(() => setStatus({ type: 'err', text: 'Gagal memuat komentar.' }));
+  }, []);
+
+  const submit = async (e) => {
     e.preventDefault();
-    const name = e.target.gbName.value.trim();
-    const text = e.target.gbMessage.value.trim();
+    const form = e.target;
+    const name = form.gbName.value.trim();
+    const text = form.gbMessage.value.trim();
     if (!name || !text) return setStatus({ type: 'err', text: 'Isi nama dan komentar dulu ya.' });
-    save([{ name, text, ts: Date.now() }, ...comments].slice(0, 100));
-    e.target.reset();
-    return setStatus({ type: 'ok', text: 'Komentar terkirim (tersimpan lokal).' });
+    try {
+      const [created] = await sb('?select=id,name,text,created_at', { method: 'POST', body: JSON.stringify({ name, text }) });
+      setComments((prev) => [created, ...prev]);
+      form.reset();
+      return setStatus({ type: 'ok', text: 'Komentar terkirim. Terima kasih!' });
+    } catch {
+      return setStatus({ type: 'err', text: 'Gagal mengirim komentar, coba lagi.' });
+    }
   };
 
   return (
     <div className="glass edge-light mt-5.5 p-6.5" data-reveal>
       <h3 className="mb-1 text-lg font-semibold">Komentar ({comments.length})</h3>
-      <p className="mb-5 text-[13.5px] text-dim">Tersimpan lokal di browser kamu (mode demo).</p>
+      <p className="mb-5 text-[13.5px] text-dim">Komentar bersifat publik dan bisa dilihat semua pengunjung.</p>
       <form onSubmit={submit} noValidate>
         <div className="grid gap-3.5 sm:grid-cols-2">
           <Field label="Nama" id="gbName" placeholder="Nama kamu" maxLength={40} />
@@ -137,16 +152,15 @@ function Guestbook() {
         {comments.length === 0 && (
           <div className="rounded-xl border border-dashed border-line p-3.5 text-center text-[13.5px] text-dim">Belum ada komentar — jadi yang pertama!</div>
         )}
-        {comments.map((comment, i) => (
-          <div key={comment.ts} className="flex gap-3 rounded-xl border border-line bg-surface p-3.5">
+        {comments.map((comment) => (
+          <div key={comment.id} className="flex gap-3 rounded-xl border border-line bg-surface p-3.5">
             <div className="grid size-9.5 flex-none place-items-center rounded-full text-[13.5px] font-bold text-ink" style={{ background: avatarColor(comment.name) }}>
               {comment.name.slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
               <div className="mb-0.5 flex items-baseline gap-2.5">
                 <span className="text-sm font-semibold">{comment.name}</span>
-                <span className="font-mono text-[11px] text-dim">{timeAgo(comment.ts)}</span>
-                <button onClick={() => save(comments.filter((_, j) => j !== i))} aria-label="Hapus komentar" title="Hapus" className="ml-auto text-dim hover:text-fg"><X size={14} /></button>
+                <span className="font-mono text-[11px] text-dim">{timeAgo(comment.created_at)}</span>
               </div>
               <div className="text-sm break-words text-muted">{comment.text}</div>
             </div>

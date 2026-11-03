@@ -2,7 +2,7 @@
 export const DATA = {
   profile: {
     name: "Yusril Mustofa", // ← nama lengkap
-    brand: "Yusril", // ← teks logo di navbar (tanpa ".dev")
+    brand: "Yusss", // ← teks logo di navbar (tanpa ".dev")
     initials: "Y", // ← inisial untuk avatar/logo
     role: "Backend Developer",
     roles: [
@@ -33,7 +33,7 @@ export const DATA = {
         url: "https://www.linkedin.com/in/yusril-mustofa/",
         icon: "linkedin",
       },
-      { label: "Email", url: "yusrilmustofa123@gmail.com", icon: "mail" },
+      { label: "Email", url: "mailto:yusrilmustofa123@gmail.com", icon: "mail" },
     ],
   },
 
@@ -82,7 +82,7 @@ export const DATA = {
     {
       mark: "IN",
       color: "#ec4899",
-      title: "Backend Engineer Intern",
+      title: "Backend Developer Intern",
       sub: "PT Telkom Indonesia",
       date: "2021 – 2022",
     },
@@ -96,7 +96,7 @@ export const DATA = {
       abbr: "LG",
       gradient:
         "linear-gradient(135deg, #0f172a 0%, #0369a1 50%, #0284c7 100%)",
-      image: "", // ← screenshot proyek, mis. "images/oauth-login.png"
+      image: "/images/OAUTH.png", // ← screenshot proyek, mis. "images/oauth-login.png"
       description:
         "Feature that allows users to log in using their Google account securely and quickly",
       longDesc: "", // ← opsional: penjelasan panjang di popup detail
@@ -111,7 +111,7 @@ export const DATA = {
       abbr: "US",
       gradient:
         "linear-gradient(135deg, #091e3a 0%, #1e3a8a 50%, #3b82f6 100%)",
-      image: "", // ← screenshot proyek, mis. "images/url-shorter.png"
+      image: "/images/shrink.png",  // ← screenshot proyek, mis. "images/url-shorter.png"
       description:
         "Feature to shorten URLs easily and quickly.",
       longDesc: "", // ← opsional: penjelasan panjang di popup detail
@@ -120,34 +120,34 @@ export const DATA = {
       links: [{ label: "GitHub", url: "https://github.com/yusrilmustofa/url-shorter" }],
     },
     {
-      id: "spp-backend",
-      title: "Backend for Tuition Fee Payment",
+      id: "full-stack Tuition Fee Payment",
+      title: "Full-stack for Tuition Fee Payment",
       categoryLabel: "Personal Project",
       abbr: "SP",
       gradient:
         "linear-gradient(135deg, #052e2b 0%, #047857 50%, #10b981 100%)",
-      image: "", // ← screenshot proyek, mis. "images/spp-backend.png"
+      image: "/images/SPP.png", // ← screenshot proyek, mis. "images/spp-backend.png"
       description:
-        "Backend system to manage SPP payments",
+        "Full-stack payment system to manage tuition fee payments",
       longDesc: "", // ← opsional: penjelasan panjang di popup detail
       tags: [], // ← opsional: teknologi, mis. ["Node.js", "MySQL"]
       features: [], // ← opsional: daftar fitur
-      links: [{ label: "GitHub", url: "https://github.com/yusrilmustofa/SPP-Backend" }],
+      links: [{ label: "Backend", url: "https://github.com/yusrilmustofa/SPP-Backend" }, { label: "Frontend", url: "https://github.com/yusrilmustofa/SPP-Frontend" }],
     },
     {
-      id: "nest-auth-crud",
-      title: "Nest Auth and CRUD",
+      id: "Barbershop",
+      title: "Barbershop Management System",
       categoryLabel: "Personal Project",
-      abbr: "NA",
+      abbr: "BS",
       gradient:
-        "linear-gradient(135deg, #1a1035 0%, #6d28d9 50%, #8b5cf6 100%)",
-      image: "", // ← screenshot proyek, mis. "images/nest-auth-crud.png"
+        "linear-gradient(135deg, #dc1a1aff 0%, #6d28d9 50%, #e3e1e7ff 100%)",
+      image: "/images/androk.png", // ← screenshot proyek, mis. "images/nest-auth-crud.png"
       description:
-        "Feature make CRUD with TypeScript and Login with JWT",
+        "A web-based application to manage barbershop transactions, including appointment management, customer management, and employee management.",
       longDesc: "", // ← opsional: penjelasan panjang di popup detail
       tags: [], // ← opsional: teknologi, mis. ["Node.js", "MySQL"]
       features: [], // ← opsional: daftar fitur
-      links: [{ label: "GitHub", url: "https://github.com/yusrilmustofa/CRUD-Auth-Nest" }],
+      links: [{ label: "GitHub", url: "https://github.com/yusrilmustofa/androk-barber" }],
     },
     {
       id: "encryption",
@@ -156,7 +156,7 @@ export const DATA = {
       abbr: "ED",
       gradient:
         "linear-gradient(135deg, #0f172a 0%, #0369a1 50%, #0284c7 100%)",
-      image: "", // ← screenshot proyek, mis. "images/encryption.png"
+      image: "/images/P2P.png", // ← screenshot proyek, mis. "images/encryption.png"
       description:
         "Feature to convert plaintext into a random string",
       longDesc: "", // ← opsional: penjelasan panjang di popup detail
@@ -165,19 +165,19 @@ export const DATA = {
       links: [{ label: "GitHub", url: "https://github.com/yusrilmustofa/TP1-Security-no-3" }],
     },
     {
-      id: "cafetaria",
-      title: "Cafetaria Project",
+      id: "RAG Service LLM (LLMA)",
+      title: "RAG Service Project",
       categoryLabel: "Personal Project",
-      abbr: "CF",
+      abbr: "RAG",
       gradient:
         "linear-gradient(135deg, #091e3a 0%, #1e3a8a 50%, #3b82f6 100%)",
       image: "", // ← screenshot proyek, mis. "images/cafetaria.png"
       description:
-        "A web-based application to manage cafeteria transactions, including menu management",
+        "Backend API for a personal student research assistant. Upload PDFs (journals, thesis references), ask questions, and get answers from your own documents with page citations.",
       longDesc: "", // ← opsional: penjelasan panjang di popup detail
       tags: [], // ← opsional: teknologi, mis. ["Node.js", "MySQL"]
       features: [], // ← opsional: daftar fitur
-      links: [{ label: "GitHub", url: "https://github.com/yusrilmustofa/cafetaria-nest.git" }],
+      links: [{ label: "GitHub", url: "https://github.com/yusrilmustofa/RAG-Service" }],
     },
   ],
 
